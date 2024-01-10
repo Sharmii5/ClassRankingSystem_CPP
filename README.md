@@ -22,7 +22,7 @@
 1. Clone the repository:
 
     ```bash
-    git clone https://github.com/your-username/ClassRankingSystem_CPP.git
+    git clone https://github.com/Sharmii5/ClassRankingSystem_CPP.git
     ```
 
 2. Navigate to the project directory:
