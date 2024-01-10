@@ -1,0 +1,95 @@
+#include <iostream>
+#include <fstream>
+#include <vector>
+#include <algorithm>
+
+// Constants
+const int NUM_BIO_CLASSES = 3;
+const int NUM_MATH_CLASSES = 5;
+const int STUDENTS_PER_CLASS = 40;
+
+// Function to calculate total marks
+int calculateTotalMarks(const std::vector<int> &marks)
+{
+    return std::accumulate(marks.begin(), marks.end(), 0);
+}
+
+// Function to read marks from the user
+void readMarks(std::vector<int> &marks, const std::string &subject)
+{
+    std::cout << "Enter marks for " << subject << ": ";
+    for (int i = 0; i < marks.size(); ++i)
+    {
+        std::cout << "Student " << i + 1 << ": ";
+        std::cin >> marks[i];
+    }
+}
+
+// Function to write ranks to a file
+void writeRanksToFile(const std::string &fileName, const std::vector<std::pair<int, int>> &ranks)
+{
+    std::ofstream file(fileName);
+    if (file.is_open())
+    {
+        for (const auto &rank : ranks)
+        {
+            file << "Student " << rank.second << " - School Rank: " << rank.first << std::endl;
+        }
+        file.close();
+        std::cout << "Ranks written to file: " << fileName << std::endl;
+    }
+    else
+    {
+        std::cerr << "Error opening file for writing!" << std::endl;
+    }
+}
+
+int main()
+{
+    std::vector<std::vector<int>> bioMarks(NUM_BIO_CLASSES * STUDENTS_PER_CLASS, std::vector<int>(3));
+    std::vector<std::vector<int>> mathMarks(NUM_MATH_CLASSES * STUDENTS_PER_CLASS, std::vector<int>(3));
+
+    // Read Bio marks
+    for (int i = 0; i < 3; ++i)
+    {
+        for (int j = 0; j < STUDENTS_PER_CLASS; ++j)
+        {
+            readMarks(bioMarks[i * STUDENTS_PER_CLASS + j], "Biology");
+        }
+    }
+
+    // Read Math marks
+    for (int i = 0; i < 3; ++i)
+    {
+        for (int j = 0; j < STUDENTS_PER_CLASS; ++j)
+        {
+            readMarks(mathMarks[i * STUDENTS_PER_CLASS + j], "Combined Maths");
+        }
+    }
+
+    // Calculate total marks and rank for Bio students
+    std::vector<std::pair<int, int>> bioRanks;
+    for (int i = 0; i < bioMarks.size(); ++i)
+    {
+        int totalMarks = calculateTotalMarks(bioMarks[i]);
+        bioRanks.emplace_back(totalMarks, i + 1);
+    }
+    std::sort(bioRanks.rbegin(), bioRanks.rend()); // Sort in descending order
+
+    // Write Bio ranks to file
+    writeRanksToFile("bio_ranks.txt", bioRanks);
+
+    // Calculate total marks and rank for Math students
+    std::vector<std::pair<int, int>> mathRanks;
+    for (int i = 0; i < mathMarks.size(); ++i)
+    {
+        int totalMarks = calculateTotalMarks(mathMarks[i]);
+        mathRanks.emplace_back(totalMarks, i + 1);
+    }
+    std::sort(mathRanks.rbegin(), mathRanks.rend()); // Sort in descending order
+
+    // Write Math ranks to file
+    writeRanksToFile("math_ranks.txt", mathRanks);
+
+    return 0;
+}
